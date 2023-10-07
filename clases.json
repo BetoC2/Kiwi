@@ -1,0 +1,30 @@
+{
+    "home": "/the/path/to/your/courses/directory",
+    "my_name": "your full name",
+    "courses": [
+        {
+            "id": "aaa",
+            "professor": "professor name",
+            "class": "name of the class",
+            "class_code": "code of the class",
+            "prof_gender": "M",
+            "path": "folder"
+        },
+        {
+            "id": "bbb",
+            "professor": "professor name",
+            "class": "name of the class",
+            "class_code": "code of the class",
+            "prof_gender": "F",
+            "path": "folder"
+        },
+        {
+            "id": "ccc",
+            "professor": "professor name",
+            "class": "name of the class",
+            "class_code": "code of the class",
+            "prof_gender": "O",
+            "path": "folder"
+        }
+    ]
+}
