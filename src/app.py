@@ -1,73 +1,42 @@
-import os, sys, json, platform, subprocess
-from docxtpl import DocxTemplate
-from datetime import date
+from commands import setup_info, add_class
+from cover import generate_cover
+from pathlib import Path
+from rich import print
+import typer, sys
 
-def getDateStr():
-    months = [
-        "enero", "febrero", "marzo", "abril",
-        "mayo", "junio", "julio", "agosto",
-        "septiembre", "octubre", "noviembre", "diciembre"
-    ]
-    today = date.today()
-    return f"{today.day} de {months[today.month - 1]} de {today.year}"
+app = typer.Typer()
 
-def getDateIso():
-    today = date.today()
-    return today.strftime("%Y-%m-%d")
 
-def getInfo(id):
-    with open("./clases.json", "r", encoding='utf-8') as jsonFile:
-        data = json.load(jsonFile)
-    
-    for course in data["courses"]:
-        if course["id"] == id:
-            course["my_name"] = data["my_name"]
-            course["home"] = data["home"]
-            return course
+@app.callback(invoke_without_command=True)
+def main(
+    ctx: typer.Context,
+    id: str = typer.Option(None, "--id", "-i", help="ID de la clase"),
+    title: str = typer.Option(None, "--title", "-t", help="Título del trabajo"),
+):
+    if ctx.invoked_subcommand is None:
+        generate_cover(id, title)
 
-    print("No se encontró la clase")
-    exit()
 
-def main():
-    # Change path to current working directory
-    os.chdir(sys.path[0])
-    info = getInfo(sys.argv[1])
-    title = sys.argv[2]
-    date = getDateStr()
+@app.command()
+def setup(
+    path: Path = typer.Option(
+        ...,
+        "--path",
+        "-p",
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        readable=True,
+        help="Ruta del directorio donde guardas tus clases.",
+    ),
+):
+    setup_info(path)
 
-    path = info.pop("home")
-    path += info.pop("path")
-    info.pop("id")
-    info["date"] = date
-    info["title"] = title
 
-    prefix = info.pop("prof_gender")
-    if prefix == "M":
-        info["prefix"] = "Profesor"
-    elif prefix == "F":
-        info["prefix"] = "Profesora"
-    else:
-        info["prefix"] = "Docente" 
-
-    fileName = f'{getDateIso()} {title}.docx'
-    doc = DocxTemplate("template.docx")
-    doc.render(info)
-    doc.save(fileName)
-    
-    system = platform.system().lower()
-    if system == "windows":
-        subprocess.run(["powershell", f"mv '{fileName}' '{path}'"])
-        subprocess.run(["powershell", f"& '{path+fileName}'"])
-
-    elif system == "darwin":
-        subprocess.run(["zsh", f"mv '{fileName}' '{path}'"])
-        subprocess.run(["zsh", f"open '{path+fileName}'"])
-    else:
-        print("Sistema operativo no compatible")
+@app.command()
+def add():
+    add_class()
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("El primer argumento es el id de la clase y el segundo el título")
-        exit()
-    main()
+    app()

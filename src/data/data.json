@@ -1,0 +1,14 @@
+{
+    "home": "/home/beto/Documents/semestre-8",
+    "my_name": "Alberto Renter\u00eda Camacho",
+    "courses": [
+        {
+            "class": "Innovaci\u00f3n y emprendimiento",
+            "id": "ie",
+            "class_code": "P2025_EAM154LN5",
+            "professor": "Alberto Cuautli Flores Mart\u00ednez",
+            "prof_gender": "Male",
+            "path": "ie"
+        }
+    ]
+}
